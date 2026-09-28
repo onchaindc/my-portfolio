@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>onchaindc — Developer</title>
+    <meta
+      name="description"
+      content="Independent developer building full-stack, Web3 and AI products."
+    />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- 1 · scroll distance -->
+    <div id="scrolltrack"></div>
+
+    <!-- 2 · stage -->
+    <div id="stage">
+      <div id="world">
+        <div id="orb"></div>
+        <h1 id="headline"><span class="inner"></span></h1>
+      </div>
+    </div>
+
+    <!-- 3 · vignette -->
+    <div class="vig" aria-hidden="true"></div>
+
+    <!-- 4 · flat archive -->
+    <div id="grid" role="region" aria-label="Project archive"></div>
+
+    <!-- 5 · header -->
+    <header id="hdr">
+      <span class="brand">onchaindc</span>
+      <button
+        id="menuBtn"
+        class="menu-btn"
+        type="button"
+        aria-label="Menu"
+        aria-expanded="false"
+        aria-controls="menu"
+      >
+        <span></span>
+        <span></span>
+      </button>
+    </header>
+
+    <!-- 6 · bio -->
+    <aside class="bio">
+      <div class="bio-id">
+        <div class="bio-name">onchaindc</div>
+        <div class="bio-role">Developer</div>
+      </div>
+      <p class="bio-desc">
+        I build full-stack, Web3 and AI products, working across interfaces, backend
+        systems and emerging technologies.
+      </p>
+    </aside>
+
+    <!-- 7 · colophon -->
+    <div class="colophon" aria-hidden="false">
+      <span>Independent Developer</span>
+      <span>2026</span>
+    </div>
+
+    <!-- grid toggle -->
+    <button
+      id="gridBtn"
+      class="grid-btn"
+      type="button"
+      aria-label="Toggle project archive"
+      aria-pressed="false"
+    >
+      <span class="ico" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    </button>
+
+    <!-- scroll cue -->
+    <div class="cue" aria-hidden="true">
+      <span>DRAG TO ROTATE</span>
+      <i></i>
+    </div>
+
+    <!-- 8 · fullscreen menu -->
+    <nav id="menu" aria-label="Main menu" inert>
+      <div class="menu-links">
+        <button class="m-link" type="button" data-action="work">Work</button>
+        <button class="m-link" type="button" data-action="about">About</button>
+        <button class="m-link" type="button" data-action="stack">Stack</button>
+        <button class="m-link" type="button" data-action="contact">Contact</button>
+      </div>
+      <div class="menu-foot">
+        <span>Independent Developer</span>
+        <span>Full-stack · Web3 · AI</span>
+      </div>
+    </nav>
+
+    <!-- conceptual about / stack panel -->
+    <div
+      id="panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="panelTitle"
+      hidden
+    >
+      <div class="panel-inner" id="panelInner"></div>
+    </div>
+
+    <!-- 9 · lightbox -->
+    <div id="lit" role="dialog" aria-modal="true" aria-labelledby="litTitle" hidden>
+      <div class="plate" id="plate">
+        <button class="close" id="litClose" type="button">Close</button>
+        <div class="plate-art" id="plateArt" aria-hidden="true"></div>
+        <div class="plate-meta">
+          <h2 id="litTitle"></h2>
+          <p class="p-cat" id="litCat"></p>
+          <p class="p-desc" id="litDesc"></p>
+          <ul class="p-tech" id="litTech"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 · intro veil -->
+    <div id="intro" aria-hidden="true"></div>
+
+    <!-- 11 · splash -->
+    <div id="splash" aria-hidden="true">
+      <div class="s-inner">
+        <div class="s-name">onchaindc</div>
+        <div class="s-role">Developer</div>
+        <div class="s-line"><i></i></div>
+        <div class="s-foot">SELECTED WORK · 2026</div>
+      </div>
+    </div>
+
+    <!-- 12 · custom cursor -->
+    <div id="cursor" aria-hidden="true"></div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
