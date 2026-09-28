@@ -9,10 +9,13 @@ const AMBIENT = 1.15; // deg per second — the constellation never fully rests
 
 interface CardState {
   el: HTMLButtonElement;
-  /** layout position in world units (R = 1) */
-  x: number;
-  y: number;
-  z: number;
+  /** unit position on the sphere */
+  ux: number;
+  uy: number;
+  uz: number;
+  /** outward-facing card orientation (degrees) */
+  lat: number;
+  lon: number;
 }
 
 export interface SceneApi {
@@ -42,25 +45,24 @@ export function createScene(
     .map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`)
     .join(" ");
 
-  /* ---------- constellation layout ----------
-   * Cards wrap around the statement on all sides — near and far, left and
-   * right — so the composition reads as a loose sphere, never one-sided.
+  /* ---------- Fibonacci sphere layout ----------
+   * The original arrangement: cards distributed evenly across a sphere,
+   * each facing outward from its surface point.
    */
-  const LAYOUT: Array<[number, number, number]> = [
-    [0.98, -0.55, 0.2], // 01 ChainMate — near, upper right
-    [-0.92, -0.3, 0.05], // 02 Offkay — upper left
-    [0.85, 0.5, -0.2], // 03 WHILE — lower right, slightly far
-    [-0.7, 0.55, 0.4], // 04 Nimiq — lower left, near
-    [0.18, -0.8, -0.55], // 05 GenLayer — top, deep
-    [-0.25, 0.85, -0.35], // 06 Experiments — bottom, deep
-  ];
-
   const cards: CardState[] = [];
   const N = PROJECTS.length;
+  const GA = Math.PI * (3 - Math.sqrt(5));
   let hoverIndex: number | null = null;
 
   PROJECTS.forEach((p, i) => {
-    const [x, y, z] = LAYOUT[i % LAYOUT.length];
+    const y = 1 - (i / (N - 1)) * 2;
+    const rad = Math.sqrt(Math.max(0, 1 - y * y));
+    const theta = i * GA;
+    const x = Math.cos(theta) * rad;
+    const z = Math.sin(theta) * rad;
+    const lat = (Math.asin(clamp(y, -1, 1)) * 180) / Math.PI;
+    const lon = (Math.atan2(x, z) * 180) / Math.PI;
+
     const el = document.createElement("button");
     el.type = "button";
     el.className = "card";
@@ -86,7 +88,7 @@ export function createScene(
     });
     orb.appendChild(el);
 
-    cards.push({ el, x, y, z });
+    cards.push({ el, ux: x, uy: y, uz: z, lat, lon });
   });
 
   /* ---------- layout metrics ---------- */
@@ -136,11 +138,10 @@ export function createScene(
   }
 
   function cardBase(c: CardState): string {
-    const x = (c.x * R).toFixed(2);
-    const y = (-c.y * R).toFixed(2);
-    const z = (c.z * R).toFixed(2);
-    // each card keeps a gentle inward tilt so it reads upright in the cluster
-    return `translate3d(${x}px, ${y}px, ${z}px) rotateY(${(-c.x * 16).toFixed(2)}deg) rotateX(${(c.y * 14).toFixed(2)}deg)`;
+    const x = (c.ux * R).toFixed(2);
+    const y = (-c.uy * R).toFixed(2);
+    const z = (c.uz * R).toFixed(2);
+    return `translate3d(${x}px, ${y}px, ${z}px) rotateY(${c.lon.toFixed(2)}deg) rotateX(${c.lat.toFixed(2)}deg)`;
   }
 
   layout();
@@ -354,8 +355,8 @@ export function createScene(
 
     for (let i = 0; i < cards.length; i++) {
       const c = cards[i];
-      const z1 = c.y * sb + c.z * cb; // rotateX first
-      const z2 = -c.x * sa + z1 * ca; // then rotateY
+      const z1 = c.uy * sb + c.uz * cb; // rotateX first
+      const z2 = -c.ux * sa + z1 * ca; // then rotateY
 
       // the sequenced/hovered project comes forward, the rest recede slightly
       const d = Math.abs(i - seqPos);
