@@ -488,8 +488,8 @@ body.revealed #hdr {
 
 .brand-name {
   font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(17px, 1.5vw, 21px);
+  font-weight: 500;
+  font-size: clamp(20px, 1.8vw, 26px);
   letter-spacing: 0.015em;
   color: var(--ink);
 }
@@ -502,15 +502,27 @@ body.revealed #hdr {
 }
 
 .menu-btn {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-content: center;
-  gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 44px;
+  min-height: 44px;
   cursor: pointer;
 }
 
-.menu-btn span {
+.menu-btn-label {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.menu-btn-lines {
+  display: grid;
+  gap: 6px;
+}
+
+.menu-btn-lines span {
   display: block;
   width: 26px;
   height: 1px;
@@ -518,11 +530,11 @@ body.revealed #hdr {
   transition: transform 0.45s cubic-bezier(0.6, 0, 0.2, 1), opacity 0.3s ease;
 }
 
-body.menu-open .menu-btn span:first-child {
+body.menu-open .menu-btn-lines span:first-child {
   transform: translateY(3.5px) rotate(45deg);
 }
 
-body.menu-open .menu-btn span:last-child {
+body.menu-open .menu-btn-lines span:last-child {
   transform: translateY(-3.5px) rotate(-45deg);
 }
 

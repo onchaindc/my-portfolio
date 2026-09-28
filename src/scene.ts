@@ -358,10 +358,17 @@ export function createScene(
       const z1 = c.uy * sb + c.uz * cb; // rotateX first
       const z2 = -c.ux * sa + z1 * ca; // then rotateY
 
-      // the sequenced/hovered project comes forward, the rest recede slightly
+      // the sequenced project comes forward and dominates, the rest recede
       const d = Math.abs(i - seqPos);
       const boost = sequencing ? clamp(1 - d * 0.32, 0.72, 1) : 1;
       const t = clamp((z2 + 1) * 0.5 * boost, 0, 1);
+
+      // the current project scales up slightly; others rest at base scale
+      const dominating = sequencing && focused === null && hoverIndex === null;
+      const prox = clamp(1 - d, 0, 1);
+      const scale = dominating ? 1 + 0.11 * prox : 1;
+      c.el.style.transform =
+        scale === 1 ? cardBase(c) : `${cardBase(c)} scale(${scale.toFixed(3)})`;
 
       let op = (0.6 + 0.4 * t) * alpha; // readable floor — cards stay visible
       let wash = (1 - t) * 0.45;
@@ -373,6 +380,10 @@ export function createScene(
           op = op * 0.4;
           wash = Math.min(0.75, wash + 0.2);
         }
+      } else if (dominating && i === near) {
+        // the active project leads: brightest, cleanest, unmistakable
+        op = Math.max(op, 0.94 * alpha);
+        wash *= 0.5;
       }
       c.el.style.opacity = op.toFixed(3);
       c.el.style.setProperty("--wash", wash.toFixed(3));
