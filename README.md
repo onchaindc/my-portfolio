@@ -1,8 +1,9 @@
-# onchaindc — Developer
+# Abdulsamad Ilias — Developer
 
-A cinematic single-page developer portfolio: a drag-rotatable 3D sphere of project
-cards orbiting the central statement **"I build things that work."**, with a flat
-archive grid, FLIP project lightbox and fullscreen menu.
+A cinematic single-page developer portfolio: **DC’s Lab** — a drag-rotatable
+constellation of project cards, with an editorial archive grid, FLIP project
+lightbox and fullscreen menu. Scrolling moves through the work as a sequence —
+01 ChainMate → 06 Experiments.
 
 ## Stack
 
@@ -34,5 +35,4 @@ the defaults above should apply without changes.
 ## Content
 
 Six projects in presentation order (not a ranking): ChainMate, Offkay, WHILE,
-Nimiq, GenLayer, Independent Experiments. No invented projects, credentials or
-external links.
+Nimiq, GenLayer, Experiments. No invented projects, credentials or external links.

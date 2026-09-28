@@ -3,8 +3,11 @@ import { createUi } from "./ui";
 
 /* scene needs the UI to open projects; the UI needs the scene to focus cards */
 let uiApi: ReturnType<typeof createUi> | null = null;
-const scene = createScene((index, el) => uiApi?.openProject(index, el));
-uiApi = createUi({ setFocused: (i) => scene.setFocused(i) });
+const scene = createScene(
+  (index, el) => uiApi?.openProject(index, el),
+  (index) => uiApi?.setActive(index),
+);
+uiApi = createUi({ setFocused: (i) => scene.setFocused(i), getCard: (i) => scene.getCard(i) });
 
 /* ---------- splash → reveal ---------- */
 const splash = document.getElementById("splash")!;

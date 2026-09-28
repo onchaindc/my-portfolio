@@ -1,5 +1,5 @@
 /* ============================================================
-   onchaindc — cinematic editorial portfolio
+   Abdulsamad Ilias — cinematic editorial portfolio
    ============================================================ */
 
 :root {
@@ -108,7 +108,9 @@ body.gridview #stage {
 }
 
 /* ------------------------------------------------------------
-   central headline — centred on the sphere's 0×0 origin
+   central lockup — identity eyebrow, editorial claim, quiet hint
+   (centred on the world's 0×0 origin; do not alter the margin
+   + translateY mechanism — the 3D counter-rotation depends on it)
    ------------------------------------------------------------ */
 #headline {
   position: absolute;
@@ -117,13 +119,6 @@ body.gridview #stage {
   width: var(--hw);
   margin-left: calc(var(--hw) / -2);
   text-align: center;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(25px, 3.7vw, 55px);
-  line-height: 1.06;
-  letter-spacing: -0.005em;
-  color: #fff;
-  text-shadow: 0 2px 34px rgba(0, 0, 0, 0.55);
   pointer-events: none;
   user-select: none;
 }
@@ -136,7 +131,30 @@ body.gridview #stage {
   transform: translateY(-50%);
 }
 
-#headline .w {
+.hl-eyebrow {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--dim);
+  opacity: 0;
+  transform: translateY(0.5em);
+  transition: opacity 0.9s ease 0.5s, transform 0.9s ease 0.5s;
+}
+
+.hl-claim {
+  display: block;
+  margin-top: 14px;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(24px, 3.4vw, 50px);
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  color: #fff;
+  text-shadow: 0 2px 34px rgba(0, 0, 0, 0.55);
+}
+
+.hl-claim .w {
   display: inline-block;
   opacity: 0;
   transform: translateY(0.42em);
@@ -146,14 +164,41 @@ body.gridview #stage {
   transition-delay: calc(var(--i) * 85ms);
 }
 
-body.revealed #headline .w {
+.hl-hint {
+  display: block;
+  margin-top: 18px;
+  font-size: 9.5px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--dim);
+  opacity: 0;
+  transition: opacity 0.9s ease 0.85s;
+}
+
+body.revealed .hl-eyebrow,
+body.revealed .hl-hint {
+  opacity: 0.85;
+  transform: none;
+}
+
+body.revealed .hl-claim .w {
   opacity: 1;
   transform: none;
   filter: blur(0);
 }
 
+/* identity claim recedes while orbiting — the work takes over */
+body.deep #headline .inner {
+  opacity: 0.24;
+  transition: opacity 0.5s ease;
+}
+
+#headline .inner {
+  transition: opacity 0.5s ease;
+}
+
 /* ------------------------------------------------------------
-   project cards — plates floating from the 0×0 origin
+   project cards — readable plates floating in the constellation
    ------------------------------------------------------------ */
 .card {
   position: absolute;
@@ -173,16 +218,18 @@ body.revealed #headline .w {
   position: absolute;
   inset: 0;
   border-radius: 3px;
-  background: #0a0a0a;
-  border: 1px solid rgba(244, 242, 239, 0.13);
+  background: #0d0d0d;
+  border: 1px solid rgba(244, 242, 239, 0.2);
   overflow: hidden;
   transform-origin: 50% 50%;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s ease, border-color 0.5s ease;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
 }
 
 .card:hover .plate,
 .card:focus-visible .plate {
-  transform: scale(1.045);
+  transform: scale(1.05);
+  border-color: rgba(244, 242, 239, 0.4);
 }
 
 .card:focus-visible .plate {
@@ -197,7 +244,7 @@ body.revealed #headline .w {
   inset: 0;
   background: radial-gradient(
     140% 90% at 50% 0%,
-    rgba(255, 255, 255, 0.035),
+    rgba(255, 255, 255, 0.05),
     transparent 62%
   );
   pointer-events: none;
@@ -220,9 +267,9 @@ body.revealed #headline .w {
 }
 
 .card .art svg {
-  width: 64%;
+  width: 78%;
   height: auto;
-  stroke: rgba(244, 242, 239, 0.3);
+  stroke: rgba(244, 242, 239, 0.52);
   stroke-width: 1;
 }
 
@@ -230,9 +277,9 @@ body.revealed #headline .w {
   position: absolute;
   top: 8px;
   left: 10px;
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: 0.22em;
-  color: rgba(244, 242, 239, 0.38);
+  color: rgba(244, 242, 239, 0.5);
   z-index: 2;
 }
 
@@ -241,10 +288,10 @@ body.revealed #headline .w {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 16px 11px 9px;
+  padding: 18px 11px 10px;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.94),
+    rgba(0, 0, 0, 0.95),
     rgba(0, 0, 0, 0.55) 55%,
     transparent
   );
@@ -256,7 +303,7 @@ body.revealed #headline .w {
   display: block;
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(12px, calc(var(--cw) * 0.085), 19px);
+  font-size: clamp(13px, calc(var(--cw) * 0.085), 19px);
   line-height: 1.15;
   color: var(--ink);
 }
@@ -264,10 +311,10 @@ body.revealed #headline .w {
 .card .cc {
   display: block;
   margin-top: 3px;
-  font-size: clamp(7.5px, calc(var(--cw) * 0.043), 10.5px);
+  font-size: clamp(8px, calc(var(--cw) * 0.043), 10.5px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: rgba(196, 190, 184, 0.95);
 }
 
 /* ------------------------------------------------------------
@@ -280,8 +327,8 @@ body.revealed #headline .w {
   pointer-events: none;
   background: radial-gradient(
     120% 92% at 50% 50%,
-    transparent 42%,
-    rgba(0, 0, 0, 0.6) 100%
+    transparent 46%,
+    rgba(0, 0, 0, 0.55) 100%
   );
   transition: opacity 0.6s ease;
 }
@@ -291,7 +338,7 @@ body.gridview .vig {
 }
 
 /* ------------------------------------------------------------
-   4 · flat archive
+   4 · flat archive — editorial index
    ------------------------------------------------------------ */
 #grid {
   position: fixed;
@@ -303,7 +350,7 @@ body.gridview .vig {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.6s ease;
-  padding: calc(76px + var(--safe-top)) calc(var(--pad) + var(--safe-right))
+  padding: calc(96px + var(--safe-top)) calc(var(--pad) + var(--safe-right))
     calc(72px + var(--safe-bottom)) calc(var(--pad) + var(--safe-left));
 }
 
@@ -314,8 +361,8 @@ body.gridview #grid {
 
 .gwrap {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: clamp(10px, 1.4vw, 20px);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: clamp(12px, 1.6vw, 22px);
   max-width: 1680px;
   margin: 0 auto;
 }
@@ -324,15 +371,15 @@ body.gridview #grid {
   position: relative;
   aspect-ratio: 3 / 2;
   border-radius: 3px;
-  background: #0b0b0b;
-  border: 1px solid rgba(244, 242, 239, 0.1);
+  background: #0d0d0d;
+  border: 1px solid rgba(244, 242, 239, 0.16);
   cursor: pointer;
   overflow: hidden;
   display: block;
   width: 100%;
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transition: opacity 0.55s ease, transform 0.55s ease, border-color 0.35s ease;
   transition-delay: calc(var(--i, 0) * 55ms);
 }
 
@@ -341,12 +388,17 @@ body.gridview .g-item {
   transform: none;
 }
 
+.g-item:hover,
+.g-item:focus-visible {
+  border-color: rgba(244, 242, 239, 0.4);
+}
+
 .g-art {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  opacity: 0.82;
+  opacity: 0.9;
   transform: scale(1);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
@@ -358,9 +410,9 @@ body.gridview .g-item {
 }
 
 .g-art svg {
-  width: 52%;
+  width: 62%;
   height: auto;
-  stroke: rgba(244, 242, 239, 0.32);
+  stroke: rgba(244, 242, 239, 0.5);
   stroke-width: 1;
 }
 
@@ -368,9 +420,9 @@ body.gridview .g-item {
   position: absolute;
   top: 12px;
   left: 14px;
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.22em;
-  color: rgba(244, 242, 239, 0.4);
+  color: rgba(244, 242, 239, 0.55);
 }
 
 .g-cap {
@@ -378,28 +430,16 @@ body.gridview .g-item {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 26px 16px 13px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.92), transparent);
+  padding: 30px 16px 14px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.94), transparent);
   text-align: left;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.g-item:hover .g-cap,
-.g-item:focus-visible .g-cap {
   opacity: 1;
-}
-
-@media (hover: none) {
-  .g-cap {
-    opacity: 1;
-  }
 }
 
 .g-cap .gt {
   display: block;
   font-family: var(--serif);
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.2;
   color: var(--ink);
 }
@@ -407,14 +447,14 @@ body.gridview .g-item {
 .g-cap .gc {
   display: block;
   margin-top: 4px;
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: rgba(196, 190, 184, 0.95);
 }
 
 /* ------------------------------------------------------------
-   5 · header
+   5 · header — identity, not a navigation bar
    ------------------------------------------------------------ */
 #hdr {
   position: fixed;
@@ -423,7 +463,7 @@ body.gridview .g-item {
   right: 0;
   z-index: 6;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   padding: calc(var(--pad) * 0.8 + var(--safe-top)) calc(var(--pad) + var(--safe-right))
     calc(var(--pad) * 0.35) calc(var(--pad) + var(--safe-left));
@@ -441,11 +481,24 @@ body.revealed #hdr {
 }
 
 .brand {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.brand-name {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: 17px;
-  letter-spacing: 0.01em;
+  font-size: clamp(17px, 1.5vw, 21px);
+  letter-spacing: 0.015em;
   color: var(--ink);
+}
+
+.brand-sub {
+  font-size: 9.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--dim);
 }
 
 .menu-btn {
@@ -474,57 +527,109 @@ body.menu-open .menu-btn span:last-child {
 }
 
 /* ------------------------------------------------------------
-   6 · bio
+   6 · active project caption — the storytelling line
    ------------------------------------------------------------ */
-.bio {
+.foc {
   position: fixed;
   z-index: 6;
   left: calc(var(--pad) + var(--safe-left));
   bottom: calc(var(--pad) * 0.6 + 54px + var(--safe-bottom));
-  max-width: min(
-    420px,
-    calc(100vw - var(--pad) * 2 - var(--safe-left) - var(--safe-right))
-  );
+  max-width: min(430px, calc(100vw - var(--pad) * 2 - var(--safe-left) - var(--safe-right)));
   opacity: 0;
-  transition: opacity 0.9s ease 0.4s;
+  transition: opacity 0.5s ease 0.15s;
   pointer-events: none;
 }
 
-body.revealed .bio {
+body.revealed .foc {
   opacity: 1;
 }
 
-body.deep .bio,
-body.gridview .bio,
-body.lit .bio,
-body.menu-open .bio,
-body.panel-open .bio {
+body.deep .foc,
+body.gridview .foc,
+body.lit .foc,
+body.menu-open .foc,
+body.panel-open .foc {
   opacity: 0;
   transition-delay: 0s;
   transition-duration: 0.35s;
 }
 
-.bio-name {
+.f-idle {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.f-active {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.f-num {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--dim);
+}
+
+.f-name {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: 19px;
-  line-height: 1.25;
+  font-size: clamp(24px, 2.6vw, 34px);
+  line-height: 1.1;
   color: var(--ink);
 }
 
-.bio-role {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 19px;
-  line-height: 1.25;
+.f-cat {
+  display: block;
+  margin-top: 6px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: var(--dim);
 }
 
-.bio-desc {
+.f-desc {
   margin-top: 10px;
   font-size: 12.5px;
-  line-height: 1.62;
-  color: var(--dim);
+  line-height: 1.6;
+  color: rgba(244, 242, 239, 0.82);
+}
+
+.f-view {
+  margin-top: 14px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 4px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.f-view:hover {
+  border-color: var(--ink);
+}
+
+/* idle hint: the headline hint covers desktop — show this only on small screens */
+.f-idle[hidden] {
+  display: none;
+}
+
+@media (min-width: 641px) {
+  .f-idle {
+    display: none;
+  }
+}
+
+.f-active[hidden] {
+  display: none;
 }
 
 /* ------------------------------------------------------------
@@ -620,7 +725,7 @@ body.gridview .grid-btn .ico i {
   align-items: center;
   gap: 9px;
   font-size: 9.5px;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--dim);
   opacity: 0;
@@ -724,7 +829,7 @@ body.menu-open #menu {
 }
 
 /* ------------------------------------------------------------
-   conceptual about / stack panel
+   about / stack / contact panel
    ------------------------------------------------------------ */
 #panel {
   position: fixed;
@@ -810,7 +915,7 @@ body.panel-open #panel {
 }
 
 /* ------------------------------------------------------------
-   9 · lightbox
+   9 · lightbox — case-study preview
    ------------------------------------------------------------ */
 #lit {
   position: fixed;
@@ -880,10 +985,10 @@ body.panel-open #panel {
 }
 
 .plate-art svg {
-  width: 56%;
-  max-width: 440px;
+  width: 60%;
+  max-width: 480px;
   height: auto;
-  stroke: rgba(244, 242, 239, 0.3);
+  stroke: rgba(244, 242, 239, 0.55);
   stroke-width: 1;
 }
 
@@ -893,17 +998,25 @@ body.panel-open #panel {
   inset: 0;
   background: radial-gradient(
     130% 90% at 50% 0%,
-    rgba(255, 255, 255, 0.035),
+    rgba(255, 255, 255, 0.05),
     transparent 62%
   );
   pointer-events: none;
 }
 
 .plate-meta {
-  padding: 22px 26px 28px;
+  padding: 24px 28px 30px;
+}
+
+.p-num {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--dim);
 }
 
 .plate-meta h2 {
+  margin-top: 10px;
   font-family: var(--serif);
   font-weight: 400;
   font-size: clamp(22px, 2.15vw, 32px);
@@ -913,8 +1026,9 @@ body.panel-open #panel {
 
 .plate-meta .p-cat {
   margin-top: 9px;
-  font-size: 13px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--dim);
 }
 
@@ -1046,55 +1160,39 @@ body.panel-open #panel {
 }
 
 /* ------------------------------------------------------------
-   12 · custom cursor
+   12 · custom cursor — a quiet 6px dot (fine pointers only)
    ------------------------------------------------------------ */
 #cursor {
   position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
-  width: 19px;
-  height: 19px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #fff;
-  mix-blend-mode: difference;
+  background: rgba(244, 242, 239, 0.9);
   pointer-events: none;
   opacity: 0;
   display: none;
   transform: translate(-60px, -60px);
-  transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 body.cursor-on #cursor {
   display: block;
-  opacity: 1;
+  opacity: 0.85;
 }
 
 #cursor.hot {
-  width: 52px;
-  height: 52px;
+  opacity: 0.4;
 }
 
-body.cursor-on,
-body.cursor-on * {
-  cursor: none !important;
-}
+/* the native cursor stays — the dot is only a quiet companion */
 
 /* ------------------------------------------------------------
    responsive · max-width 900px
    ------------------------------------------------------------ */
 @media (max-width: 900px) {
-  .bio {
-    max-width: min(
-      420px,
-      calc(100vw - var(--pad) * 2 - var(--safe-left) - var(--safe-right))
-    );
-  }
-
-  .bio-desc {
-    font-size: 12px;
-  }
-
   #lit {
     padding: calc(20px + var(--safe-top)) calc(14px + var(--safe-right))
       calc(20px + var(--safe-bottom)) calc(14px + var(--safe-left));
@@ -1119,7 +1217,7 @@ body.cursor-on * {
   }
 
   .gwrap {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
 }
 
@@ -1131,13 +1229,19 @@ body.cursor-on * {
     display: none;
   }
 
-  .bio {
-    max-width: calc(
-      100vw - var(--pad) * 2 - var(--safe-left) - var(--safe-right)
-    );
+  .foc {
+    max-width: calc(100vw - var(--pad) * 2 - var(--safe-left) - var(--safe-right));
   }
 
-  #headline {
+  .f-desc {
+    display: none;
+  }
+
+  .f-name {
+    font-size: 22px;
+  }
+
+  .hl-claim {
     font-size: clamp(22px, 6.4vw, 34px);
   }
 
@@ -1155,17 +1259,15 @@ body.cursor-on * {
     --pad: clamp(12px, 4vw, 18px);
   }
 
-  .bio-name,
-  .bio-role {
-    font-size: 17px;
-  }
-
-  .bio-desc {
-    font-size: 11.5px;
-    line-height: 1.55;
-  }
-
   .cue {
+    display: none;
+  }
+
+  .hl-eyebrow {
+    font-size: 9px;
+  }
+
+  .hl-hint {
     display: none;
   }
 
@@ -1206,10 +1308,6 @@ body.cursor-on * {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
-
-  .g-cap {
-    opacity: 1;
-  }
 }
 
 /* ------------------------------------------------------------
@@ -1218,20 +1316,6 @@ body.cursor-on * {
 @media (max-width: 380px) {
   :root {
     --hw: min(88vw, 320px);
-  }
-
-  .bio {
-    bottom: calc(var(--pad) * 0.6 + 54px + var(--safe-bottom));
-  }
-
-  .bio-id {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .bio-desc {
-    display: none;
   }
 
   .gwrap {
@@ -1251,13 +1335,12 @@ body.cursor-on * {
    landscape / short screens
    ------------------------------------------------------------ */
 @media (max-height: 520px) and (orientation: landscape) {
-  .bio,
   .colophon,
   .cue {
     display: none;
   }
 
-  #headline {
+  .hl-claim {
     font-size: clamp(18px, 4.8vh, 28px);
   }
 

@@ -2,24 +2,19 @@ import { PROJECTS } from "./projects";
 import { motifSVG } from "./motifs";
 
 export interface UiApi {
-  openProject(index: number, source: HTMLElement): void;
+  openProject(index: number, source: HTMLElement | null): void;
+  setActive(index: number | null): void;
 }
 
 const ABOUT_HTML = `
   <p class="p-eyebrow">Developer</p>
-  <h2 id="panelTitle">onchaindc</h2>
-  <p class="p-lead">I build full-stack, Web3 and AI products, with a focus on turning ambitious ideas into working systems.</p>
-  <ul class="p-list">
-    <li>Full-stack development</li>
-    <li>Web3 infrastructure</li>
-    <li>AI-powered products</li>
-    <li>Backend systems</li>
-    <li>Interactive interfaces</li>
-  </ul>
+  <h2 id="panelTitle">Abdulsamad Ilias</h2>
+  <p class="p-lead">Developer building full-stack, Web3 and AI products.</p>
+  <p class="p-lead">I build products from the interface down to the underlying systems, with a focus on turning ambitious ideas into working software.</p>
   <button class="p-close" type="button">Close</button>`;
 
 const STACK_HTML = `
-  <p class="p-eyebrow">onchaindc</p>
+  <p class="p-eyebrow">Abdulsamad Ilias</p>
   <h2 id="panelTitle">Stack</h2>
   <ul class="p-list">
     <li>TypeScript</li>
@@ -30,9 +25,15 @@ const STACK_HTML = `
     <li>Web3</li>
     <li>Nimiq</li>
     <li>GenLayer</li>
-    <li>AI systems</li>
-    <li>Backend APIs</li>
+    <li>AI</li>
   </ul>
+  <button class="p-close" type="button">Close</button>`;
+
+const CONTACT_HTML = `
+  <p class="p-eyebrow">Contact</p>
+  <h2 id="panelTitle">Abdulsamad Ilias</h2>
+  <p class="p-lead">Developer — Full-stack · Web3 · AI.</p>
+  <p class="p-lead">For enquiries, reach out through the profile or channel that brought you here.</p>
   <button class="p-close" type="button">Close</button>`;
 
 const reduced = () =>
@@ -54,7 +55,10 @@ function rectOf(el: HTMLElement | null): DOMRect {
   return el.getBoundingClientRect();
 }
 
-export function createUi(deps: { setFocused(index: number | null): void }): UiApi {
+export function createUi(deps: {
+  setFocused(index: number | null): void;
+  getCard(index: number): HTMLElement | null;
+}): UiApi {
   const body = document.body;
   const stage = document.getElementById("stage")!;
   const hdr = document.getElementById("hdr")!;
@@ -65,6 +69,7 @@ export function createUi(deps: { setFocused(index: number | null): void }): UiAp
   const litEl = document.getElementById("lit")!;
   const plate = document.getElementById("plate")!;
   const plateArt = document.getElementById("plateArt")!;
+  const litNum = document.getElementById("litNum")!;
   const litTitle = document.getElementById("litTitle")!;
   const litCat = document.getElementById("litCat")!;
   const litDesc = document.getElementById("litDesc")!;
@@ -73,12 +78,22 @@ export function createUi(deps: { setFocused(index: number | null): void }): UiAp
   const panelEl = document.getElementById("panel")!;
   const panelInner = document.getElementById("panelInner")!;
 
+  /* active-project caption (bottom-left) */
+  const fIdle = document.querySelector<HTMLElement>(".f-idle")!;
+  const fActive = document.querySelector<HTMLElement>(".f-active")!;
+  const fNum = document.querySelector<HTMLElement>(".f-num")!;
+  const fName = document.querySelector<HTMLElement>(".f-name")!;
+  const fCat = document.querySelector<HTMLElement>(".f-cat")!;
+  const fDesc = document.querySelector<HTMLElement>(".f-desc")!;
+  const fView = document.querySelector<HTMLButtonElement>(".f-view")!;
+
   let menuOpen = false;
   let gridOpen = false;
   let litOpen = false;
   let litClosing = false;
   let panelOpen = false;
   let litSource: HTMLElement | null = null;
+  let activeIndex: number | null = null;
 
   /* ---------- focus / inert management ---------- */
   function syncInert() {
@@ -93,6 +108,30 @@ export function createUi(deps: { setFocused(index: number | null): void }): UiAp
   function markDeep() {
     body.classList.add("deep");
   }
+
+  /* ---------- active project caption ---------- */
+  function setActive(index: number | null) {
+    activeIndex = index;
+    if (index === null || !PROJECTS[index]) {
+      fActive.hidden = true;
+      fIdle.hidden = false;
+      body.classList.remove("focused");
+      return;
+    }
+    const p = PROJECTS[index];
+    fNum.textContent = String(index + 1).padStart(2, "0");
+    fName.textContent = p.title;
+    fCat.textContent = p.category;
+    fDesc.textContent = p.description;
+    fIdle.hidden = true;
+    fActive.hidden = false;
+    body.classList.add("focused");
+  }
+
+  fView.addEventListener("click", () => {
+    if (activeIndex === null) return;
+    openProject(activeIndex, deps.getCard(activeIndex));
+  });
 
   /* ---------- flat archive ---------- */
   const gwrap = document.createElement("div");
@@ -153,11 +192,11 @@ export function createUi(deps: { setFocused(index: number | null): void }): UiAp
       if (action === "work") setGrid(true);
       else if (action === "about") openPanel(ABOUT_HTML);
       else if (action === "stack") openPanel(STACK_HTML);
-      // contact: return to the main experience (no destinations supplied)
+      else if (action === "contact") openPanel(CONTACT_HTML);
     });
   });
 
-  /* ---------- about / stack panel ---------- */
+  /* ---------- about / stack / contact panel ---------- */
   function openPanel(html: string) {
     if (panelOpen) {
       panelInner.innerHTML = html;
@@ -200,7 +239,7 @@ export function createUi(deps: { setFocused(index: number | null): void }): UiAp
   });
 
   /* ---------- lightbox with FLIP ---------- */
-  function openProject(index: number, source: HTMLElement) {
+  function openProject(index: number, source: HTMLElement | null) {
     if (litOpen || litClosing) return;
     const p = PROJECTS[index];
     if (!p) return;
@@ -212,6 +251,7 @@ export function createUi(deps: { setFocused(index: number | null): void }): UiAp
     markDeep();
 
     plateArt.innerHTML = motifSVG(p.motif);
+    litNum.textContent = `Project ${String(index + 1).padStart(2, "0")}`;
     litTitle.textContent = p.title;
     litCat.textContent = p.category;
     litDesc.textContent = p.description;
@@ -334,7 +374,7 @@ export function createUi(deps: { setFocused(index: number | null): void }): UiAp
     }
   });
 
-  /* ---------- custom cursor (fine pointers only) ---------- */
+  /* ---------- custom cursor (fine pointers only) — a quiet dot ---------- */
   const cursor = document.getElementById("cursor")!;
   if (window.matchMedia("(pointer: fine)").matches) {
     let x = -60;
@@ -365,12 +405,15 @@ export function createUi(deps: { setFocused(index: number | null): void }): UiAp
       cursor.style.opacity = "0";
     });
     document.documentElement.addEventListener("mouseenter", () => {
-      if (on) cursor.style.opacity = "1";
+      if (on) cursor.style.opacity = "";
     });
 
     const tick = () => {
-      x += (tx - x) * 0.2;
-      y += (ty - y) * 0.2;
+      x += (tx - x) * 0.55;
+      y += (ty - y) * 0.55;
+      // snap to target under 0.1px so the dot settles without residual drift
+      if (Math.abs(tx - x) < 0.1) x = tx;
+      if (Math.abs(ty - y) < 0.1) y = ty;
       cursor.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
       requestAnimationFrame(tick);
     };
@@ -379,5 +422,5 @@ export function createUi(deps: { setFocused(index: number | null): void }): UiAp
 
   syncInert();
 
-  return { openProject };
+  return { openProject, setActive };
 }

@@ -4,14 +4,15 @@ import { motifSVG } from "./motifs";
 const ROT = 0.13; // degrees per pointer pixel
 const TILT = -4;
 const PITCH = 32;
+const ROLL = 4.5; // subtle world roll while dragging — physical, not showy
+const AMBIENT = 1.15; // deg per second — the constellation never fully rests
 
 interface CardState {
   el: HTMLButtonElement;
-  ux: number;
-  uy: number;
-  uz: number;
-  lat: number;
-  lon: number;
+  /** layout position in world units (R = 1) */
+  x: number;
+  y: number;
+  z: number;
 }
 
 export interface SceneApi {
@@ -23,35 +24,43 @@ export interface SceneApi {
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
-export function createScene(onOpen: (index: number, el: HTMLElement) => void): SceneApi {
+export function createScene(
+  onOpen: (index: number, el: HTMLElement) => void,
+  onActive?: (index: number | null) => void,
+): SceneApi {
   const root = document.documentElement;
   const body = document.body;
   const stage = document.getElementById("stage")!;
   const world = document.getElementById("world")!;
   const orb = document.getElementById("orb")!;
   const headline = document.getElementById("headline")!;
-  const inner = headline.querySelector(".inner")!;
 
-  /* ---------- central statement, word by word ---------- */
-  const words = "I build things that work.".split(" ");
-  inner.innerHTML = words
+  /* ---------- landing statement, word by word (claim only — eyebrow and hint stay) ---------- */
+  const claim = headline.querySelector(".hl-claim")!;
+  const words = "DC’s Lab".split(" ");
+  claim.innerHTML = words
     .map((w, i) => `<span class="w" style="--i:${i}">${w}</span>`)
     .join(" ");
 
-  /* ---------- build cards on the Fibonacci sphere ---------- */
+  /* ---------- constellation layout ----------
+   * A loose orbital ring, right-weighted so the identity owns the left column.
+   * Hand-placed positions: no pole clustering, no reads-as-carousel symmetry.
+   */
+  const LAYOUT: Array<[number, number, number]> = [
+    [1.02, -0.6, 0.12], // 01 ChainMate — near, upper right
+    [0.74, -0.05, -0.34], // 02 Offkay — mid depth
+    [0.98, 0.52, 0.3], // 03 WHILE — near, lower right
+    [0.46, -0.44, -0.6], // 04 Nimiq — far, upper left of the cluster
+    [0.28, 0.18, 0.66], // 05 GenLayer — very near, left of the cluster
+    [0.62, 0.72, -0.18], // 06 Experiments — below, slightly far
+  ];
+
   const cards: CardState[] = [];
   const N = PROJECTS.length;
-  const GA = Math.PI * (3 - Math.sqrt(5));
+  let hoverIndex: number | null = null;
 
   PROJECTS.forEach((p, i) => {
-    const y = 1 - (i / (N - 1)) * 2;
-    const rad = Math.sqrt(Math.max(0, 1 - y * y));
-    const theta = i * GA;
-    const x = Math.cos(theta) * rad;
-    const z = Math.sin(theta) * rad;
-    const lat = (Math.asin(clamp(y, -1, 1)) * 180) / Math.PI;
-    const lon = (Math.atan2(x, z) * 180) / Math.PI;
-
+    const [x, y, z] = LAYOUT[i % LAYOUT.length];
     const el = document.createElement("button");
     el.type = "button";
     el.className = "card";
@@ -68,14 +77,24 @@ export function createScene(onOpen: (index: number, el: HTMLElement) => void): S
         </span>
         <span class="wash" aria-hidden="true"></span>
       </span>`;
+    el.addEventListener("pointerenter", (e) => {
+      if (e.pointerType === "touch") return;
+      hoverIndex = i;
+    });
+    el.addEventListener("pointerleave", () => {
+      if (hoverIndex === i) hoverIndex = null;
+    });
     orb.appendChild(el);
 
-    cards.push({ el, ux: x, uy: y, uz: z, lat, lon });
+    cards.push({ el, x, y, z });
   });
 
   /* ---------- layout metrics ---------- */
-  let R = 200;
-  let cw = 160;
+  let R = 240;
+  let cw = 200;
+  let desktop = true;
+  let wWorld = 0; // px offset of the constellation centre from screen centre
+  let hWorld = 0;
 
   function layout() {
     const w = window.innerWidth;
@@ -83,27 +102,38 @@ export function createScene(onOpen: (index: number, el: HTMLElement) => void): S
     let hr: number, wr: number, floor: number, scale: number, persp: number;
 
     if (w <= 380) {
-      hr = 0.38;
-      wr = 0.48;
-      floor = 108;
-      scale = 0.44;
-      persp = 620;
-    } else if (w <= 640) {
       hr = 0.42;
       wr = 0.52;
       floor = 120;
-      scale = 0.46;
-      persp = 760;
+      scale = 0.5;
+      persp = 700;
+      desktop = false;
+    } else if (w <= 640) {
+      hr = 0.44;
+      wr = 0.56;
+      floor = 132;
+      scale = 0.52;
+      persp = 820;
+      desktop = false;
     } else {
       hr = 0.46;
       wr = 0.58;
-      floor = 155;
-      scale = 0.47;
-      persp = w <= 900 ? 920 : 1150;
+      floor = 165;
+      scale = 0.46;
+      persp = w <= 900 ? 980 : 1150;
+      desktop = true;
     }
 
-    R = Math.max(floor, Math.min(480, h * hr, w * wr));
-    cw = Math.round(Math.max(72, R * scale));
+    R = Math.max(floor, Math.min(520, h * hr, w * wr));
+    cw = Math.round(Math.max(96, R * scale));
+
+    if (desktop) {
+      wWorld = Math.round(Math.min(0.22 * w, 320));
+      hWorld = 0;
+    } else {
+      wWorld = 0;
+      hWorld = Math.round(h * 0.06);
+    }
 
     root.style.setProperty("--persp", `${persp}px`);
     root.style.setProperty("--cw", `${cw}px`);
@@ -114,10 +144,11 @@ export function createScene(onOpen: (index: number, el: HTMLElement) => void): S
   }
 
   function cardBase(c: CardState): string {
-    const x = (c.ux * R).toFixed(2);
-    const y = (-c.uy * R).toFixed(2);
-    const z = (c.uz * R).toFixed(2);
-    return `translate3d(${x}px, ${y}px, ${z}px) rotateY(${c.lon.toFixed(2)}deg) rotateX(${c.lat.toFixed(2)}deg)`;
+    const x = (c.x * R).toFixed(2);
+    const y = (-c.y * R).toFixed(2);
+    const z = (c.z * R).toFixed(2);
+    // each card keeps a gentle inward tilt so it reads upright in the cluster
+    return `translate3d(${x}px, ${y}px, ${z}px) rotateY(${(-c.x * 16).toFixed(2)}deg) rotateX(${(c.y * 14).toFixed(2)}deg)`;
   }
 
   layout();
@@ -132,6 +163,25 @@ export function createScene(onOpen: (index: number, el: HTMLElement) => void): S
   let focused: number | null = null;
   let revealed = false;
   let alpha = 0;
+
+  // pointer parallax (normalized -1..1, eased)
+  let mx = 0;
+  let my = 0;
+  let mxT = 0;
+  let myT = 0;
+  window.addEventListener(
+    "pointermove",
+    (e) => {
+      if (e.pointerType === "touch") return;
+      mxT = (e.clientX / window.innerWidth - 0.5) * 2;
+      myT = (e.clientY / window.innerHeight - 0.5) * 2;
+    },
+    { passive: true },
+  );
+
+  // scroll sequence position (eased)
+  let seqPos = 0;
+  let lastActive: number | null = -1; // sentinel: forces the first emit
 
   /* ---------- pointer input ---------- */
   const coarse = window.matchMedia("(pointer: coarse)").matches;
@@ -196,7 +246,6 @@ export function createScene(onOpen: (index: number, el: HTMLElement) => void): S
     lastX = e.clientX;
     lastY = e.clientY;
 
-    if (moved > 50) body.classList.add("deep");
     e.preventDefault();
   });
 
@@ -225,8 +274,21 @@ export function createScene(onOpen: (index: number, el: HTMLElement) => void): S
     onOpen(idx, card);
   });
 
+  /* ---------- ambient drift ---------- */
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let lastT = 0;
+
   /* ---------- the loop ---------- */
-  function frame() {
+  function frame(t: number) {
+    const dt = Math.min(0.05, lastT ? (t - lastT) / 1000 : 0.016);
+    lastT = t;
+
+    // slow continuous orbit — yields the moment the user takes hold,
+    // and holds still while a card is being inspected
+    if (!reducedMotion && !dragging && focused === null && hoverIndex === null) {
+      dragX += AMBIENT * dt;
+    }
+
     // momentum
     if (!dragging && focused === null) {
       dragX += velX;
@@ -248,27 +310,49 @@ export function createScene(onOpen: (index: number, el: HTMLElement) => void): S
       if (velY > 0) velY = 0;
     }
 
-    // scroll dolly
-    const p = clamp(window.scrollY / (window.innerHeight * 0.16), 0, 1);
+    // pointer parallax easing
+    mx += (mxT - mx) * 0.045;
+    my += (myT - my) * 0.045;
+
+    // scroll dolly + sequence focus
+    const maxScroll = Math.max(1, window.innerHeight * 0.16);
+    const p = clamp(window.scrollY / maxScroll, 0, 1);
     const camZTarget = p * Math.min(64, R * 0.12);
     camZ += (camZTarget - camZ) * 0.075;
 
-    const sx = TILT + dragY;
-    const sy = spin + dragX;
+    // which project is "current" per scroll progress (0..1 → 0..N-1)
+    const sequencing = p > 0.04;
+    const target = p * (N - 1);
+    seqPos += (target - seqPos) * (dragging ? 0.04 : 0.08);
+    const near = clamp(Math.round(seqPos), 0, N - 1);
+    const effective = hoverIndex ?? (sequencing && focused === null ? near : null);
+    if (effective !== lastActive) {
+      lastActive = effective;
+      onActive?.(effective);
+    }
 
-    // world: translateZ then rotateY then rotateX
-    world.style.transform = `translateZ(${camZ.toFixed(2)}px) rotateY(${sy.toFixed(3)}deg) rotateX(${sx.toFixed(3)}deg)`;
+    const sx = TILT + dragY + my * 1.4;
+    const sy = spin + dragX + mx * 2.2;
+    const roll = dragging ? clamp(velX * 0.55, -ROLL, ROLL) : 0;
 
-    // headline counter-rotation — rightmost translateZ applies first
+    // world: constellation offset → dolly → drag rotation → parallax
+    world.style.transform = `translate3d(${(wWorld - mx * 26).toFixed(2)}px, ${(hWorld - my * 18).toFixed(2)}px, ${camZ.toFixed(2)}px) rotateY(${sy.toFixed(3)}deg) rotateX(${sx.toFixed(3)}deg) rotateZ(${roll.toFixed(3)}deg)`;
+
+    // statement counter-rotation — rightmost translateZ applies first
     headline.style.transform = `rotateX(${(-sx).toFixed(3)}deg) rotateY(${(-sy).toFixed(3)}deg) translateZ(${(R * 0.62).toFixed(2)}px)`;
-    headline.style.opacity = String(Math.max(0, 1 - p * 0.55));
+    headline.style.opacity = String(Math.max(0, 1 - p * 0.5));
 
     // scene alpha (splash → reveal)
     if (revealed && alpha < 1) {
       alpha = Math.min(1, alpha + (1 - alpha) * 0.06 + 0.004);
     }
 
-    // depth shading per card
+    // immersion state: hide the big identity + cue while actively orbiting
+    // (ambient drift is excluded on purpose — it must never dim the identity)
+    const speed = Math.abs(velX) + Math.abs(velY);
+    body.classList.toggle("deep", dragging || speed > 0.05 || focused !== null);
+
+    // depth shading per card — constellation z + scroll focus
     const A = (sy * Math.PI) / 180;
     const B = (sx * Math.PI) / 180;
     const sa = Math.sin(A);
@@ -278,13 +362,27 @@ export function createScene(onOpen: (index: number, el: HTMLElement) => void): S
 
     for (let i = 0; i < cards.length; i++) {
       const c = cards[i];
-      const z1 = c.uy * sb + c.uz * cb; // rotateX first
-      const z2 = -c.ux * sa + z1 * ca; // then rotateY
-      const t = (z2 + 1) * 0.5; // 0 = far, 1 = near
-      let op = (0.45 + 0.55 * t) * alpha;
-      if (focused !== null) op = i === focused ? 0 : op * 0.45;
+      const z1 = c.y * sb + c.z * cb; // rotateX first
+      const z2 = -c.x * sa + z1 * ca; // then rotateY
+
+      // the sequenced/hovered project comes forward, the rest recede slightly
+      const d = Math.abs(i - seqPos);
+      const boost = sequencing ? clamp(1 - d * 0.32, 0.72, 1) : 1;
+      const t = clamp((z2 + 1) * 0.5 * boost, 0, 1);
+
+      let op = (0.6 + 0.4 * t) * alpha; // readable floor — cards stay visible
+      let wash = (1 - t) * 0.45;
+
+      if (focused !== null) {
+        if (i === focused) {
+          op = 0;
+        } else {
+          op = op * 0.4;
+          wash = Math.min(0.75, wash + 0.2);
+        }
+      }
       c.el.style.opacity = op.toFixed(3);
-      c.el.style.setProperty("--wash", ((1 - t) * 0.42).toFixed(3));
+      c.el.style.setProperty("--wash", wash.toFixed(3));
     }
 
     requestAnimationFrame(frame);

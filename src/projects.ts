@@ -14,7 +14,7 @@ export const PROJECTS: Project[] = [
     title: "ChainMate",
     category: "Web3 · Multiplayer · AI",
     description:
-      "A multiplayer chess platform combining real-time gameplay, competitive infrastructure, GenLayer-powered post-game analysis and Nimiq payments.",
+      "A multiplayer chess platform combining real-time gameplay, GenLayer-powered post-game analysis and Nimiq payment infrastructure.",
     techs: ["Next.js", "TypeScript", "Supabase", "GenLayer", "Nimiq"],
     motif: "board",
   },
@@ -23,7 +23,7 @@ export const PROJECTS: Project[] = [
     title: "Offkay",
     category: "Full-stack · Product",
     description:
-      "Student-housing platform. Responsible for Offkay's technical development, building and maintaining the platform's core architecture.",
+      "Responsible for Offkay’s technical development, building and maintaining the platform’s core architecture.",
     motif: "plan",
   },
   {
@@ -31,7 +31,7 @@ export const PROJECTS: Project[] = [
     title: "WHILE",
     category: "AI · Interactive Product",
     description:
-      "An interactive AI waiting experience designed to make the time while an AI response is being generated useful and engaging through lightweight interactive experiences.",
+      "An interactive AI waiting experience designed to make the time spent waiting for AI useful and engaging.",
     motif: "cycle",
   },
   {
@@ -39,7 +39,7 @@ export const PROJECTS: Project[] = [
     title: "Nimiq",
     category: "Web3 · Payments",
     description:
-      "Nimiq wallet connectivity, payment flows, transaction handling, verification and blockchain infrastructure.",
+      "Work involving Nimiq wallet connectivity, payment flows, transaction handling and blockchain infrastructure.",
     motif: "ledger",
   },
   {
@@ -47,15 +47,15 @@ export const PROJECTS: Project[] = [
     title: "GenLayer",
     category: "AI · Web3",
     description:
-      "AI-powered on-chain systems, including decentralized and AI-assisted application experiments and escrow infrastructure.",
+      "Work involving AI-powered on-chain systems and decentralized application experiments.",
     motif: "layers",
   },
   {
     id: "experiments",
-    title: "Independent Experiments",
+    title: "Experiments",
     category: "R&D · Prototypes",
     description:
-      "A collection of smaller experiments across AI, Web3, product interfaces, backend systems and emerging technologies.",
+      "Independent experiments across AI, Web3, interfaces, backend systems and emerging technologies.",
     motif: "sparks",
   },
 ];
