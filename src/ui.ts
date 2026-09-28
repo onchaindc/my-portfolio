@@ -33,7 +33,12 @@ const CONTACT_HTML = `
   <p class="p-eyebrow">Contact</p>
   <h2 id="panelTitle">onchaindc</h2>
   <p class="p-lead">Developer — Full-stack · Web3 · AI.</p>
-  <p class="p-lead">For enquiries, reach out through the profile or channel that brought you here.</p>
+  <ul class="p-links">
+    <li><a href="https://x.com/onchaindc" target="_blank" rel="noopener noreferrer">X<span>x.com/onchaindc</span></a></li>
+    <li><a href="https://t.me/onchaindc" target="_blank" rel="noopener noreferrer">Telegram<span>t.me/onchaindc</span></a></li>
+    <li><a href="https://discord.com/users/onchaindc" target="_blank" rel="noopener noreferrer">Discord<span>onchaindc</span></a></li>
+    <li><a href="mailto:onchaindc@gmail.com">Mail<span>onchaindc@gmail.com</span></a></li>
+  </ul>
   <button class="p-close" type="button">Close</button>`;
 
 const reduced = () =>

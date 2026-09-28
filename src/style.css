@@ -838,7 +838,7 @@ body.menu-open #menu {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.74);
+  background: #000;
   opacity: 0;
   overflow-y: auto;
   padding: calc(72px + var(--safe-top)) var(--pad) calc(52px + var(--safe-bottom));
@@ -897,6 +897,47 @@ body.panel-open #panel {
   border-bottom: 1px solid rgba(244, 242, 239, 0.14);
 }
 
+/* contact links — quiet editorial rows */
+.p-links {
+  list-style: none;
+  margin-top: 28px;
+}
+
+.p-links li {
+  border-top: 1px solid rgba(244, 242, 239, 0.14);
+}
+
+.p-links li:last-child {
+  border-bottom: 1px solid rgba(244, 242, 239, 0.14);
+}
+
+.p-links a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding: 12px 0;
+  color: rgba(244, 242, 239, 0.88);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+.p-links a:hover,
+.p-links a:focus-visible {
+  color: var(--ink);
+  padding-left: 6px;
+}
+
+.p-links a span {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
 .p-close {
   margin-top: 30px;
   min-height: 44px;
@@ -921,7 +962,7 @@ body.panel-open #panel {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(0, 0, 0, 0.96);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -936,6 +977,7 @@ body.panel-open #panel {
   display: none;
 }
 
+/* the plate stays opaque over the dimmed backdrop */
 .plate {
   position: relative;
   width: min(72vw, 860px, calc((100vh - 230px) * 1.5));

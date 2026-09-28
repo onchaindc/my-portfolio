@@ -43,16 +43,16 @@ export function createScene(
     .join(" ");
 
   /* ---------- constellation layout ----------
-   * A loose orbital ring, right-weighted so the identity owns the left column.
-   * Hand-placed positions: no pole clustering, no reads-as-carousel symmetry.
+   * Cards wrap around the statement on all sides — near and far, left and
+   * right — so the composition reads as a loose sphere, never one-sided.
    */
   const LAYOUT: Array<[number, number, number]> = [
-    [1.02, -0.6, 0.12], // 01 ChainMate — near, upper right
-    [0.74, -0.05, -0.34], // 02 Offkay — mid depth
-    [0.98, 0.52, 0.3], // 03 WHILE — near, lower right
-    [0.46, -0.44, -0.6], // 04 Nimiq — far, upper left of the cluster
-    [0.28, 0.18, 0.66], // 05 GenLayer — very near, left of the cluster
-    [0.62, 0.72, -0.18], // 06 Experiments — below, slightly far
+    [0.98, -0.55, 0.2], // 01 ChainMate — near, upper right
+    [-0.92, -0.3, 0.05], // 02 Offkay — upper left
+    [0.85, 0.5, -0.2], // 03 WHILE — lower right, slightly far
+    [-0.7, 0.55, 0.4], // 04 Nimiq — lower left, near
+    [0.18, -0.8, -0.55], // 05 GenLayer — top, deep
+    [-0.25, 0.85, -0.35], // 06 Experiments — bottom, deep
   ];
 
   const cards: CardState[] = [];
@@ -92,7 +92,6 @@ export function createScene(
   /* ---------- layout metrics ---------- */
   let R = 240;
   let cw = 200;
-  let desktop = true;
   let wWorld = 0; // px offset of the constellation centre from screen centre
   let hWorld = 0;
 
@@ -107,33 +106,26 @@ export function createScene(
       floor = 120;
       scale = 0.5;
       persp = 700;
-      desktop = false;
     } else if (w <= 640) {
       hr = 0.44;
       wr = 0.56;
       floor = 132;
       scale = 0.52;
       persp = 820;
-      desktop = false;
     } else {
       hr = 0.46;
       wr = 0.58;
       floor = 165;
       scale = 0.46;
       persp = w <= 900 ? 980 : 1150;
-      desktop = true;
     }
 
     R = Math.max(floor, Math.min(520, h * hr, w * wr));
     cw = Math.round(Math.max(96, R * scale));
 
-    if (desktop) {
-      wWorld = Math.round(Math.min(0.22 * w, 320));
-      hWorld = 0;
-    } else {
-      wWorld = 0;
-      hWorld = Math.round(h * 0.06);
-    }
+    // constellation is centred — cards surround the statement on all sides
+    wWorld = 0;
+    hWorld = 0;
 
     root.style.setProperty("--persp", `${persp}px`);
     root.style.setProperty("--cw", `${cw}px`);
