@@ -1,4 +1,4 @@
-# Abdulsamad Ilias — Developer
+# onchaindc — Developer
 
 A cinematic single-page developer portfolio: **DC’s Lab** — a drag-rotatable
 constellation of project cards, with an editorial archive grid, FLIP project

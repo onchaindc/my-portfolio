@@ -8,13 +8,13 @@ export interface UiApi {
 
 const ABOUT_HTML = `
   <p class="p-eyebrow">Developer</p>
-  <h2 id="panelTitle">Abdulsamad Ilias</h2>
+  <h2 id="panelTitle">onchaindc</h2>
   <p class="p-lead">Developer building full-stack, Web3 and AI products.</p>
   <p class="p-lead">I build products from the interface down to the underlying systems, with a focus on turning ambitious ideas into working software.</p>
   <button class="p-close" type="button">Close</button>`;
 
 const STACK_HTML = `
-  <p class="p-eyebrow">Abdulsamad Ilias</p>
+  <p class="p-eyebrow">onchaindc</p>
   <h2 id="panelTitle">Stack</h2>
   <ul class="p-list">
     <li>TypeScript</li>
@@ -31,7 +31,7 @@ const STACK_HTML = `
 
 const CONTACT_HTML = `
   <p class="p-eyebrow">Contact</p>
-  <h2 id="panelTitle">Abdulsamad Ilias</h2>
+  <h2 id="panelTitle">onchaindc</h2>
   <p class="p-lead">Developer — Full-stack · Web3 · AI.</p>
   <p class="p-lead">For enquiries, reach out through the profile or channel that brought you here.</p>
   <button class="p-close" type="button">Close</button>`;
